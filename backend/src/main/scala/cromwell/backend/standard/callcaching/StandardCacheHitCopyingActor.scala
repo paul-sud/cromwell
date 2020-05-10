@@ -141,7 +141,7 @@ abstract class StandardCacheHitCopyingActor(val standardParams: StandardCacheHit
   when(Idle) {
     case Event(command: CopyOutputsCommand, None) if isSourceBlacklisted(command) =>
       // We don't want to log this because bucket blacklisting is a common and expected occurrence.
-      failAndStop(MetricableCacheCopyError(MetricableCacheCopyErrorCategory.BucketBlacklisted))
+      failAndStop(MetricableCacheCopyError(MetricableCacheCopyErrorCategory.BucketBlacklisted), declined = true)
 
     case Event(CopyOutputsCommand(simpletons, jobDetritus, returnCode), None) =>
       // Try to make a Path of the callRootPath from the detritus
@@ -256,8 +256,8 @@ abstract class StandardCacheHitCopyingActor(val standardParams: StandardCacheHit
     stay()
   }
 
-  def failAndStop(failure: CacheCopyError): State = {
-    context.parent ! CopyingOutputsFailedResponse(jobDescriptor.key, standardParams.cacheCopyAttempt, failure)
+  def failAndStop(failure: CacheCopyError, declined: Boolean = false): State = {
+    context.parent ! CopyingOutputsFailedResponse(jobDescriptor.key, standardParams.cacheCopyAttempt, failure, declined)
     context stop self
     stay()
   }
