@@ -7,13 +7,14 @@ import cromwell.core.simpleton.WomValueSimpleton
 object BackendCacheHitCopyingActor {
   final case class CopyOutputsCommand(womValueSimpletons: Seq[WomValueSimpleton], jobDetritusFiles: Map[String, String], returnCode: Option[Int])
 
-  // 'declined' means that the copying actor declined to attempt copying the cache hit. Currently this is true only
-  // for blacklisting reasons.
-  final case class CopyingOutputsFailedResponse(jobKey: JobKey, cacheCopyAttempt: Int, failure: CacheCopyError, declined: Boolean = false)
+  final case class CopyingOutputsFailedResponse(jobKey: JobKey, cacheCopyAttempt: Int, failure: CacheCopyError)
 
   sealed trait CacheCopyError
-  final case class LoggableCacheCopyError(failure: Throwable) extends CacheCopyError
-  final case class MetricableCacheCopyError(failureCategory: MetricableCacheCopyErrorCategory) extends CacheCopyError
+  /** A cache hit copy was attempted but failed.  */
+  final case class CopyAttemptError(failure: Throwable) extends CacheCopyError
+  /** Copying was requested for a blacklisted cache hit, however the cache hit copying actor found the hit had already
+    * been blacklisted so no novel copy attempt was made. */
+  final case class BlacklistedError(failureCategory: MetricableCacheCopyErrorCategory) extends CacheCopyError
 }
 
 object MetricableCacheCopyErrorCategory {
