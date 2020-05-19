@@ -2,6 +2,11 @@
 
 ## 51 Release Notes
 
+### Changes and Warnings
+
+The configuration format for call cache blacklisting has been updated, please see the [call caching documentation](
+https://cromwell.readthedocs.io/en/stable/Configuring/#call-caching) for details.
+
 ### New functionality
 
 #### new xxh64 and fingerprint strategies for call caching
@@ -12,6 +17,13 @@ Two faster strategies have been added for this use case: `xxh64` and
 `fingerprint`. `xxh64` is a lightweight hashing algorithm, `fingerprint` is a strategy designed to be very 
 lightweight. Read more about it in the [call caching documentation](
 https://cromwell.readthedocs.io/en/stable/Configuring/#call-caching).
+
+#### Call caching blacklisting improvements
+
+Cromwell previously supported blacklisting GCS buckets containing cache hits which could not be copied for permissions 
+reasons. Cromwell now adds support for blacklisting individual which could not be copied for any reason,
+as well as grouping blacklist caches according to a workflow option key. More information available in the [
+call caching documentation]( https://cromwell.readthedocs.io/en/stable/Configuring/#call-caching). 
 
 ### Bugfixes
 
